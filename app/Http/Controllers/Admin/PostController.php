@@ -59,11 +59,16 @@ class PostController extends Controller
             'title' => 'required',
             'content' => 'required',
             'category_id' => 'nullable|exists:categories,id',
+            'image' => 'nullable | image | mimes:jpg,bmp,png,jpeg',
             'tags' => 'array'
         ]);
 
         $data = $request->all();
         $data['slug']=$this->slug($data["title"]);
+        if(isset($data["image"])){
+            $img_path = Storage::put('uploads', $data['image']);
+            $data['image'] = $img_path;
+        }
 
         $newPost = new Post();
 
@@ -110,11 +115,17 @@ class PostController extends Controller
             'title' => 'required',
             'content' => 'required',
             'category_id' => 'nullable|exists:categories,id',
+            'image' => 'nullable | image | mimes:jpg,bmp,png,jpeg',
             'tags' => 'array'
         ]);
 
         $data = $request->all();
         $data["slug"] = ($post->title == $data['title']) ? $post->slug : $this->slug($data["title"], $post->id);
+        if(isset($data["image"])){
+            $img_path = Storage::put('uploads', $data['image']);
+            $data['image'] = $img_path;
+        }
+
         $post->update($data);
         $post->tags()->sync(isset($data['tags']) ? $data['tags'] : []);
         return redirect()->route('admin.posts.index', $post->id);
