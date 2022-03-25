@@ -19,6 +19,11 @@ const router = new VueRouter({
             name: "about",
             component: About
         },
+        {
+            path: "/*",
+            name: "404-notFound",
+            component: About
+        },
     ]
 });
 
